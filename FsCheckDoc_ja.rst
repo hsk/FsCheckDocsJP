@@ -46,5 +46,38 @@ FsCheck を使うために、最新の FsCheck のソースコードかバイナ
 
 を呼び出すか、Check 関数を呼び出す小さなコンソールアプリを書いて実行することで性質をテストできます。
 
+性質をまとめる
+--------------
+
+大抵は、テストすべき性質は1つにとどまらず書くことでしょう。FsCheck はクラスの静的メンバーとして性質をひとまとめにすることができます:
+
+.. code-block:: fsharp
+
+  type ListProperties =
+      static member ``reverse of reverse is original`` xs = RevRevIsOrig xs
+      static member ``reverse is original`` xs = RevIsOrig xs
+
+これらは Check.QuickAll 関数を使うことで一度にチェックできます:
+
+.. code-block:: fsharp
+
+  > Check.QuickAll<ListProperties>();;
+  --- Checking ListProperties ---
+  ListProperties.reverse of reverse is original-Ok, passed 100 tests.
+  ListProperties.reverse is original-Falsifiable, after 3 tests (3 shrinks) (StdGen (885249229,295727999)):
+  [1; 0]
+
+FsCheck はそれぞれのテスト名も出力します。モジュールにあるすべてのトップレベル関数はそのモジュール名をもつクラスの静的メンバーとしてコンパイルされるので、あるモジュールにあるすべてのトップレベル関数をテストするために Check.QuickAll を使うこともできます。しかし、モジュールの型は F# から直接アクセスできないので、次のようなトリックを使いましょう:
+
+.. code-block:: fsharp
+
+  > Check.QuickAll typeof<ListProperties>.DeclaringType;;
+  --- Checking QuickStart ---
+  QuickStart.revRevIsOrig-Ok, passed 100 tests.
+  QuickStart.revIsOrig-Falsifiable, after 6 tests (7 shrinks) (StdGen (885549247,295727999)):
+  [1; 0]
+  QuickStart.revRevIsOrigFloat-Falsifiable, after 10 tests (4 shrinks) (StdGen (885679254,295727999)):
+  [nan]
+
 .. [#] 推定による絞り込みのこと。
 .. [#] X.X.を参照
