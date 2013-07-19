@@ -13,4 +13,4 @@
 
   let revRevIsOrigInt (xs:list<int>) = List.rev(List.rev xs) = xs
 
-は int のリストについてのみチェックされます。FsCheck は様々な形式の性質をチェック
+は int のリストについてのみチェックされます。FsCheck は様々な形式の性質をチェックすることができます―これらの形式はテスト可能と呼ばれ、'Testable というジェネリック型によって API において示されます。'Testable は bool 値または unit を返す任意のパラメータを取る関数となるでしょう。後者の場合、もし(例外を)送出しなければテストはパスします。
